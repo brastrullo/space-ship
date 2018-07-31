@@ -1,9 +1,4 @@
-import { State as s, setState, canvas, ctx } from './store.js'
-
-const addBackground = () => {
-  ctx.fillStyle = '#123'
-  ctx.fillRect(0, 0, canvas.width, canvas.height)
-}
+import { State, setState} from './store.js'
 
 const createImage = (filename) => new Promise((resolve) => {
   const image = new Image()
@@ -33,6 +28,6 @@ const hitDetection = (activeEnemies, activeBullets) => {
 }
 
 // s.mouse doesn't need to be tested because it is implied in the store also mouse movement is crucial to the game
-const hasMousePosition = (state = s) => s && Number.isInteger(s.mouse.y)
+const hasMousePosition = (state = State) => state && Number.isInteger(state.mouse.y)
 
-export { addBackground, createImage, resize, hasMousePosition, getCanvasSize, isInBounds }
+export { createImage, resize, hasMousePosition, getCanvasSize, isInBounds }

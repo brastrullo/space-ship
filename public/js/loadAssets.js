@@ -1,4 +1,4 @@
-import { State as s, setState } from './store.js'
+import { setState } from './store.js'
 import { createImage } from './utils.js'
 
 

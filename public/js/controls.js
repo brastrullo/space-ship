@@ -1,11 +1,11 @@
-import { State as s, setState, canvas, ctx } from './store.js'
-import { PlayerShip } from './init.js'
+import { State, setState } from './store.js'
+import { PlayerShip } from './App.js'
 
 const onKeyPress = (e) => {
 }
 
 const onMouseMove = (e) => {
-  const { mouse } = s
+  const { mouse } = State
   setState({
     mouse : {
       x: e.clientX,
@@ -15,7 +15,7 @@ const onMouseMove = (e) => {
 }
 
 const mouseDown = (e) => {
-  const { weapon } = s
+  const { weapon } = State
   setState({
     weapon: { firing: true }
   })
@@ -23,7 +23,7 @@ const mouseDown = (e) => {
 }
 
 const mouseUp = (e) => {
-  const { weapon } = s
+  const { weapon } = State
   setState({
     weapon: { firing: false }
   })

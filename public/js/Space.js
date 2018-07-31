@@ -1,4 +1,4 @@
-import { State as s, setState, canvas, ctx } from './store.js'
+import { State, setState } from './store.js'
 import { createImage } from './utils.js'
 import Enemies from './Enemies.js'
 
@@ -24,15 +24,15 @@ export const EnemyShips = new Enemies('../images/enemyShip.png', [
 //   canvas.height = window.innerHeight
 // }
 
-const addBackground = () => {
+const addBackground = (ctx) => {
   ctx.fillStyle = '#123'
   ctx.fillRect(0, 0, canvas.width, canvas.height)
 }
 
 
-Space.prototype.draw = function() {
-  addBackground()
-  EnemyShips.draw()
+Space.prototype.draw = function(ctx) {
+  addBackground(ctx)
+  EnemyShips.draw(ctx)
 }
 
 Space.prototype.update = function() {

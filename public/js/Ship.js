@@ -1,7 +1,7 @@
-import { State as s, setState, canvas, ctx } from './store.js'
+import { State, setState } from './store.js'
 import { createImage, resize } from './utils.js'
 import Bullets from './Bullets.js'
-const { mouse } = s
+const { mouse } = State
 
 const shipOrigin = () => {
   resize()
@@ -20,7 +20,7 @@ export default function Ship(imgUrl, size = 80, pos = shipOrigin()) {
   this.bulletsArray = this.weapon.arr
 }
 
-Ship.prototype.draw = function() {
+Ship.prototype.draw = function(ctx) {
   const x = this.x ? this.x : shipOrigin()[0]
   const y = this.y ? this.y : shipOrigin()[1]
   if (this.img === undefined) {
@@ -38,7 +38,7 @@ Ship.prototype.draw = function() {
       x, y, this.size, this.size // Destination Image on canvas, Location and size: (10, top) => (size, size)
     )
   }
-  this.weapon.draw()
+  this.weapon.draw(ctx)
 }
 
 Ship.prototype.update = function(mouse) {

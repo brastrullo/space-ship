@@ -1,5 +1,5 @@
 'use strict'
-import { State as s, setState, canvas, ctx } from './store.js'
+import { State, setState } from './store.js'
 import loadAssets from './loadAssets.js'
 import { resize, hasMousePosition, getCanvasSize } from './utils.js'
 import { onKeyPress, onMouseMove, mouseDown, mouseUp } from './controls.js'
@@ -9,17 +9,16 @@ import Enemies from './Enemies.js'
 import Bullets from './Bullets.js'
 import Space from './Space.js'
 
-const { started } = s
+const { started } = State
 
-if (canvas === undefined || ctx === undefined) {
-  throw new Error('canvas: ', canvas, 'ctx: ', ctx)
-}
+const canvas = document.getElementById('canvas')
+const ctx = canvas.getContext('2d')
 
-export const PlayerShip = new Ship('../images/space-ship1.png')
 const Environment = new Space()
+export const PlayerShip = new Ship('../images/space-ship1.png')
 
 const update = (time) => {
-  const { mouse, weapon, bullets, activeBullets } = s
+  const { mouse, weapon, bullets, activeBullets } = State
   const { size, x, y } = Ship
   
   PlayerShip.update(mouse)
@@ -28,9 +27,9 @@ const update = (time) => {
 
 // add error handling for assets loaded
 const draw = (time) => {
-  const { enemyShipImg, mouse, weapon, bullets, activeBullets } = s
-  Environment.draw()
-  PlayerShip.draw()
+  const { enemyShipImg, mouse, weapon, bullets, activeBullets } = State
+  Environment.draw(ctx)
+  PlayerShip.draw(ctx)
   //ctx.save & restore only in draws
 }
 
@@ -41,15 +40,17 @@ const loop = (currentTime) => {
 }
 
 const init = () => {
+  const startGame = () => requestAnimationFrame(loop)
+
+  window.addEventListener('resize', resize)
+  window.addEventListener('mousemove', onMouseMove)
+  window.addEventListener('mousedown', mouseDown)
+  window.addEventListener('mouseup', mouseUp)
+  window.addEventListener('keypress', onKeyPress)
+
   resize()
   loadAssets()
-  requestAnimationFrame(loop)
+  startGame()
 }
-
-window.addEventListener('resize', resize)
-window.addEventListener('mousemove', onMouseMove)
-window.addEventListener('mousedown', mouseDown)
-window.addEventListener('mouseup', mouseUp)
-window.addEventListener('keypress', onKeyPress)
 
 init()

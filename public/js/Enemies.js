@@ -1,4 +1,4 @@
-import { State as s, setState, canvas, ctx } from './store.js'
+import { State, setState } from './store.js'
 import { createImage, resize } from './utils.js'
 import Ship from './Ship.js'
 import Bullets from './Bullets.js'
@@ -38,7 +38,7 @@ function Enemy(type, pos) {
   }
 }
 
-Enemies.prototype.draw = function() {
+Enemies.prototype.draw = function(ctx) {
   if (this.img === undefined) {
     EnemyInit(this).then(arr => 
       arr.forEach(enemy => {

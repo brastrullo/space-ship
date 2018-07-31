@@ -1,4 +1,4 @@
-import { State as s, setState, canvas, ctx } from './store.js'
+import { State, setState } from './store.js'
 import { isInBounds } from './utils.js'
 
 export default function Bullets(type = 'default', max = 50) {
@@ -13,7 +13,7 @@ Bullets.prototype.log = function() {
   console.log(this.arr)
 }
 
-Bullets.prototype.draw = function() {
+Bullets.prototype.draw = function(ctx) {
   this.arr.forEach(bullet => {
     const { pos, x, y, active } = bullet
     if (isInBounds(x, y) && active === true) {
@@ -32,7 +32,7 @@ Bullets.prototype.clearInactive = function() {
 }
 
 Bullets.prototype.update = function() {
-  const { activeBullets } = s
+  const { activeBullets } = State
 
   this.arr.forEach(bullet => {
     isInBounds(bullet.x, bullet.y) ? animateBullet() : unactivateBullet()
