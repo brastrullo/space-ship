@@ -35,18 +35,22 @@ const loop = (currentTime) => {
   requestAnimationFrame(loop)
 }
 
+const onResize = (e) => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+};
+
 const init = () => {
   const startGame = () => requestAnimationFrame(loop)
 
-  window.addEventListener('resize', Space.resize)
+  window.addEventListener('resize', onResize)
   window.addEventListener('mousemove', onMouseMove)
   window.addEventListener('mousedown', mouseDown)
   window.addEventListener('mouseup', mouseUp)
   window.addEventListener('keypress', onKeyPress)
 
-  // resize()
-  loadAssets()
-  startGame()
+  onResize();
+  loadAssets().then(startGame())
 }
 
 init()

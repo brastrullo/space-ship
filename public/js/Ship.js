@@ -20,20 +20,14 @@ export default function Ship(imgUrl, size = 80, pos = shipOrigin()) {
 }
 
 Ship.prototype.draw = function(ctx) {
-  const x = this.x ? this.x : shipOrigin()[0]
-  const y = this.y ? this.y : shipOrigin()[1]
-  if (this.img === undefined) {
-    shipInit(this).then(res => {
-      return (
-        ctx.drawImage(res.img,
-          0, 0, res.img.height, res.img.height, // Source Image, Location and size: (0, 0) => (size, size)
-          x, y, res.size, res.size // Destination Image on canvas, Location and size: (10, top) => (size, size)
-        )
-      )
-    })
-  } else {
-    ctx.drawImage(this.img,
-      0, 0, this.img.height, this.img.height, // Source Image, Location and size: (0, 0) => (size, size)
+  const x = this.x ? this.x : shipOrigin()[0];
+  const y = this.y ? this.y : shipOrigin()[1];
+  // we know from loadAssets, the shipImg will be found in State
+  const { shipImg } = State;
+  const hasImage = shipImg instanceof Image;
+  if (hasImage) {
+    ctx.drawImage(shipImg,
+      0, 0, shipImg.height, shipImg.height, // Source Image, Location and size: (0, 0) => (size, size)
       x, y, this.size, this.size // Destination Image on canvas, Location and size: (10, top) => (size, size)
     )
   }
@@ -58,16 +52,4 @@ Ship.prototype.update = function(mouse) {
 
 Ship.prototype.logObj = function() {
   console.log(this)
-}
-
-function shipInit(Ship) {
-  if (State.shipImg !== undefined) {
-    return State.shipImg
-  }
-  console.log('Ship Image not loaded: ', State.shipImg)
-  // return createImage(Ship.imgUrl)
-  //   .then(img => {
-  //     Ship.img = img
-  //     return Ship
-  //   })
 }

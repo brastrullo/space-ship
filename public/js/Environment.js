@@ -20,11 +20,6 @@ export const EnemyShips = new Enemies('../images/enemyShip.png', [
   {x: 800, y: 100},
 ])
 
-const resize = () => {
-  canvas.width = window.innerWidth
-  canvas.height = window.innerHeight
-}
-
 const addBackground = (ctx) => {
   ctx.fillStyle = '#123'
   ctx.fillRect(0, 0, canvas.width, canvas.height)
