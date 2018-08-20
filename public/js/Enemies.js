@@ -1,5 +1,5 @@
 import { State, setState } from './store.js'
-import { createImage, resize } from './utils.js'
+import { createImage } from './utils.js'
 import Ship from './Ship.js'
 import Bullets from './Bullets.js'
 
@@ -40,9 +40,9 @@ function Enemy(type, pos) {
 
 Enemies.prototype.draw = function(ctx) {
   if (this.img === undefined) {
-    EnemyInit(this).then(arr => 
+    EnemyInit(this).then(arr =>
       arr.forEach(enemy => {
-        ctx.drawImage(this.img, 
+        ctx.drawImage(this.img,
           0, 0, this.img.height, this.img.height, // Source Image, Location and size: (0, 0) => (size, size)
           enemy.pos.x, enemy.pos.y, this.size, this.size // Destination Image on canvas, Location and size: (10, top) => (size, size)
         )

@@ -1,8 +1,9 @@
 import { State, setState } from './store.js'
 import { createImage } from './utils.js'
 import Enemies from './Enemies.js'
+import Ship from './Ship.js'
 
-export default function Space() {
+export default function Environment() {
   this.activeEnemies = []
   this.activeBullets = []
   this.background = ""
@@ -19,30 +20,29 @@ export const EnemyShips = new Enemies('../images/enemyShip.png', [
   {x: 800, y: 100},
 ])
 
-// const resize = () => {
-//   canvas.width = window.innerWidth
-//   canvas.height = window.innerHeight
-// }
+const resize = () => {
+  canvas.width = window.innerWidth
+  canvas.height = window.innerHeight
+}
 
 const addBackground = (ctx) => {
   ctx.fillStyle = '#123'
   ctx.fillRect(0, 0, canvas.width, canvas.height)
 }
 
-
-Space.prototype.draw = function(ctx) {
+Environment.prototype.draw = function(ctx) {
   addBackground(ctx)
   EnemyShips.draw(ctx)
 }
 
-Space.prototype.update = function() {
+Environment.prototype.update = function() {
 
 }
 
-Space.prototype.addEnemies = function() {
+Environment.prototype.addEnemies = function() {
 
 }
 
-Space.prototype.collisionDetection = function() {
+Environment.prototype.collisionDetection = function() {
   
 }

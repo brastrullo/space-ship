@@ -6,28 +6,28 @@ const createImage = (filename) => new Promise((resolve) => {
   image.onload = () => resolve(image)
 })
 
-const resize = () => {
-  canvas.width = window.innerWidth
-  canvas.height = window.innerHeight
-}
-
-const getCanvasSize = () => {
-  return {canvasWidth: canvas.width, canvasHeight: canvas.height}
-}
-
 const isInBounds = (x, y) => {
   return x > 0 && y > 0
 }
 
+const initializeEnemies = () => {
+  
+}
+
 const hitDetection = (activeEnemies, activeBullets) => {
+  if (activeEnemies.length === 0 || activeBullets.length === 0) return
+
   activeEnemies.forEach((enemy,i) => {
     if (enemy.didHit()) {
       // activeEnemies.slice(i, 1)
     }
   })
+  //filter ships and bullets for what is the most probable hit(farthest bullet/enemy out)
+  const maxEnemyY = activeEnemies.reduce((result, currentEnemy) => (currentEnemy.y > result) ? currentEnemy.y : result, 0)
+  const minBulletY = activeBullets.reduce((result, currentBullet) => (currentBullet.y < result) ? currentBullet.y : result, result)
 }
 
 // s.mouse doesn't need to be tested because it is implied in the store also mouse movement is crucial to the game
 const hasMousePosition = (state = State) => state && Number.isInteger(state.mouse.y)
 
-export { createImage, resize, hasMousePosition, getCanvasSize, isInBounds }
+export { createImage, hasMousePosition, isInBounds }

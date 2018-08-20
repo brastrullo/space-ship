@@ -1,10 +1,9 @@
 import { State, setState } from './store.js'
-import { createImage, resize } from './utils.js'
+import { createImage } from './utils.js'
 import Bullets from './Bullets.js'
 const { mouse } = State
 
 const shipOrigin = () => {
-  resize()
   return [Math.round(canvas.width / 2), Math.round(canvas.height - (canvas.height * .1))]
 }
 
@@ -62,9 +61,13 @@ Ship.prototype.logObj = function() {
 }
 
 function shipInit(Ship) {
-  return createImage(Ship.imgUrl)
-    .then(img => {
-      Ship.img = img
-      return Ship
-    })
+  if (State.shipImg !== undefined) {
+    return State.shipImg
+  }
+  console.log('Ship Image not loaded: ', State.shipImg)
+  // return createImage(Ship.imgUrl)
+  //   .then(img => {
+  //     Ship.img = img
+  //     return Ship
+  //   })
 }

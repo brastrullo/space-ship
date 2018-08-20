@@ -68,6 +68,7 @@ Bullets.prototype.clear = function() {
 }
 
 function Bullet(pos, type = 'default', active) {
+  this.direction = (type === 'default') ? 'up' : 'down'
   this.pos = pos
   this.x = pos[0]
   this.y = pos[1]
