@@ -7,9 +7,17 @@ const initialState = {
   },
   midX: undefined,
   bullets: 5,
-  activeBullets: [],
+  activeBullets: [], // we're deprcating
   activeEnemies: [],
   assetsLoaded: false,
+  /*
+  bullets: {
+    lastTimeBulletFired: 0,
+    activeBullets: []
+  }
+  */
+  lastTimeBulletFired: 0,
+  activeBullet: []
 }
 
 const State = Object.assign(true,{}, initialState)

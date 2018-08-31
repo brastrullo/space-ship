@@ -5,7 +5,7 @@ export default function Bullets(type = 'default', max = 50) {
   this.direction = (type === 'default') ? 'up' : 'down'
   this.max = max
   this.type = type
-  this.arr = []
+  this.arr = [{ x: 100, y: 100, active: true }]
   this.size = 5
 }
 
@@ -15,7 +15,7 @@ Bullets.prototype.log = function() {
 
 Bullets.prototype.draw = function(ctx) {
   this.arr.forEach(bullet => {
-    const { pos, x, y, active } = bullet
+    const { x, y, active } = bullet
     if (isInBounds(x, y) && active === true) {
       ctx.fillStyle = 'red'
       ctx.fillRect(x, y - 5, this.size, this.size)

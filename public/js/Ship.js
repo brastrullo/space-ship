@@ -1,55 +1,39 @@
 import { State, setState } from './store.js'
 import { createImage } from './utils.js'
+// TODO: refactor bullets into array of bullet
 import Bullets from './Bullets.js'
-const { mouse } = State
 
-const shipOrigin = () => {
-  return [Math.round(canvas.width / 2), Math.round(canvas.height - (canvas.height * .1))]
-}
+export default function Ship(image, x, y) {
+  // Validate the inputs before we go forwards, so that we can safely assume image, x and y
+  // are all valid to use and we are safe to use them without checking
+  if (!(image instanceof Image)) {
+    throw new Error('Invalid or missing image!', image);
+  }
+  if (x < 0 || x > canvas.width) {
+    throw new Error('Invalid X, out of bounds of canvas');
+  }
+  if (y < 0 || y > canvas.height) {
+    throw new Error('Invalid Y, out of bounds of canvas');
+  }
 
-export default function Ship(imgUrl, size = 80, pos = shipOrigin()) {
-  this.imgUrl = imgUrl
-  this.size = size
-  this.pos = pos
-  this.x = pos[0]
-  this.y = pos[1]
+  this.image = image
+  this.x = x
+  this.y = y
+  this.halfShipWidth = Math.floor(this.image.width / 2);
+  this.halfShipHeight = Math.floor(this.image.height / 2);
+
+
   this.firing = false
-  this.weapon = new Bullets('default', this.maxBullets)
   this.maxBullets = 50
+  this.weapon = new Bullets('default', this.maxBullets)
   this.bulletsArray = this.weapon.arr
 }
 
-Ship.prototype.draw = function(ctx) {
-  const x = this.x ? this.x : shipOrigin()[0];
-  const y = this.y ? this.y : shipOrigin()[1];
-  // we know from loadAssets, the shipImg will be found in State
-  const { shipImg } = State;
-  const hasImage = shipImg instanceof Image;
-  if (hasImage) {
-    ctx.drawImage(shipImg,
-      0, 0, shipImg.height, shipImg.height, // Source Image, Location and size: (0, 0) => (size, size)
-      x, y, this.size, this.size // Destination Image on canvas, Location and size: (10, top) => (size, size)
-    )
-  }
+Ship.prototype.draw = function() {
+  const { ctx } = State;
+  const shipX = this.x - this.halfShipWidth;
+  const shipY = this.y - this.halfShipHeight;
+  ctx.drawImage(this.image, shipX ,shipY);
   this.weapon.draw(ctx)
 }
 
-Ship.prototype.update = function(mouse) {
-  if (this.pos !== undefined && this.x !== mouse.x && this.y !== mouse.y) {
-    const size = this.size
-    const xPos = mouse.x - (size / 2)
-    const yPos = mouse.y - size
-    this.pos = [xPos, yPos]
-    this.x = xPos
-    this.y = yPos
-    this.midX = (this.x + (this.size / 2))
-  }
-  if (this.firing === true) {
-    this.weapon.fire([this.midX, this.y])
-  }
-  this.weapon.update()
-}
-
-Ship.prototype.logObj = function() {
-  console.log(this)
-}

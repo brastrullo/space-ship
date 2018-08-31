@@ -1,7 +1,7 @@
 import { State, setState } from './store.js'
-import { PlayerShip } from './App.js'
 
 const onKeyPress = (e) => {
+  // todo setState({ keyPress: e.key })
 }
 
 const onMouseMove = (e) => {
@@ -15,11 +15,12 @@ const onMouseMove = (e) => {
 }
 
 const mouseDown = (e) => {
+  // TODO: controls should not know of app info like weapons, and firing
+  // just let me know when a button was pressed (i.e. mouseDown: true, or mouse: 'down')
   const { weapon } = State
   setState({
     weapon: { firing: true }
   })
-  PlayerShip.firing = true
 }
 
 const mouseUp = (e) => {
@@ -27,7 +28,6 @@ const mouseUp = (e) => {
   setState({
     weapon: { firing: false }
   })
-  PlayerShip.firing = false
 }
 
 export { onKeyPress, onMouseMove, mouseDown, mouseUp }

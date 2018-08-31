@@ -1,16 +1,20 @@
 import { State as s, setState } from './store.js'
 import { isInBounds } from './utils.js'
 
+// NOTE: This could be depreacted code
+/*
+
 const drawBullets = () => {
   const { Ship, shipImg, bullets, weapon, activeBullets } = s
   const midX = Ship.x + (shipImg.height / 2) - 5
   const maxBullets = 20
   const bulletsArray = activeBullets
 
+  // smells like you're updating inside a draw
   if (weapon && weapon.firing === true && bulletsArray.length < maxBullets) {
     bulletsArray.push({ x: midX, y: Ship.y })
   }
-  
+
   bulletsArray.map(bullet => {
     if (isInBounds(bullet.x, bullet.y)) {
       const canvas = document.getElementById('canvas')
@@ -33,3 +37,4 @@ const animateBullets = () => {
 }
 
 export { drawBullets, animateBullets }
+*/

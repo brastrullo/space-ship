@@ -1,4 +1,4 @@
-import { setState } from './store.js'
+import { State, setState } from './store.js'
 import { createImage } from './utils.js'
 
 const IMAGES_PATH = '../images/';
@@ -15,7 +15,7 @@ const loadAssets = () =>
         setState({
           [shipImage]: image,
           [shipSize]: image.height
-        }, () => console.log(`${shipSize}: ${image.height} ${shipImage}: `, image));
+        });
       })
     });
 
