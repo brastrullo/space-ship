@@ -2,11 +2,11 @@
 import { State, setState } from './store.js'
 import loadAssets from './loadAssets.js'
 import { hasMousePosition } from './utils.js'
-import { onKeyPress, onMouseMove, mouseDown, mouseUp } from './controls.js'
+import setupEventListeners from './controls.js'
 // import { drawBullets, animateBullets } from './weapons.js'
 import Ship from './Ship.js'
-import Enemies from './Enemies.js'
-import Bullets from './Bullets.js'
+// import Enemies from './Enemies.js'
+// import Bullets from './Bullets.js'
 import Environment from './Environment.js'
 
 /*
@@ -34,8 +34,8 @@ const update = (time) => {
 
   // If there are bullets, move them
   if (activeBullet) {
-    const bulletSpeed = 3;
-    activeBullet.forEach(bullet => bullet.y -= bulletSpeed);
+    const bulletSpeed = 3
+    activeBullet.forEach(bullet => bullet.y -= bulletSpeed)
   }
 
   // Handle bullet firing
@@ -51,14 +51,17 @@ const update = (time) => {
 
 // add error handling for assets loaded
 const draw = (time) => {
-  const { PlayerShip, ctx, activeBullet } = State;
-  Space.draw(ctx)
+  const { PlayerShip, EnemyShip, ctx, activeBullet } = State;
+  Space.draw()
   PlayerShip.draw()
+  EnemyShip.draw()
 
+  /*
   if (activeBullet) {
     ctx.fillStyle = 'blue';
     activeBullet.forEach(bullet => ctx.fillRect(bullet.x, bullet.y, 5, 5));
   }
+  */
 
   //ctx.save & restore only in draws
 }
@@ -72,23 +75,23 @@ const loop = (currentTime) => {
   requestAnimationFrame(loop)
 }
 
-const onResize = (e) => {
-  const { canvas } = State;
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-};
-
 const createPlayerShip = () => {
   // This is to create an instance of Ship but pointing to our loaded asset for Player Ship
-  // e.g. setState({ PlayerShip: new Ship() })
+  const { canvas, shipImg } = State;
   const buffer = 20; // pixels away from the bottom of the screen, like padding
-  setState({ PlayerShip: new Ship(State.shipImg, canvas.width / 2, canvas.height - State.shipImg.height - buffer) })
+  const playerStartX = Math.floor(canvas.width / 2)
+  const playerStartY = (canvas.height - shipImg.height - buffer)
+  const playerShipSizePct = 90 // % of the original image size
+  setState({ PlayerShip: new Ship(shipImg, playerStartX, playerStartY, playerShipSizePct) })
 };
 
 const createEnemyShip = () => {
   // This is to create an instance of Ship but pointing to our loaded asset for Enemy Ship
-  // e.g. setState({ EnemyShip: new Ship() })
-  setState({ EnemyShip: new Ship(State.enemyShipImg, canvas.width / 2, 100) })
+  const { canvas, enemyShipImg } = State;
+  const enemyStartX = Math.floor(canvas.width / 2)
+  const enemyStartY = 100 // 100px from the top of the screen
+  const enemyShipSizePct = 40 // % of the original image size
+  setState({ EnemyShip: new Ship(enemyShipImg, enemyStartX, enemyStartY, enemyShipSizePct) })
 };
 
 const startGame = () => {
@@ -104,14 +107,10 @@ const init = () => {
   setState({ canvas, ctx });
 
   // Setup event listeners
-  window.addEventListener('resize', onResize)
-  window.addEventListener('keypress', onKeyPress)
-  canvas.addEventListener('mousemove', onMouseMove)
-  canvas.addEventListener('mousedown', mouseDown)
-  canvas.addEventListener('mouseup', mouseUp)
+  setupEventListeners();
 
   // Trigger the onResize event, to set the canvas to the size of the window
-  onResize()
+  window.dispatchEvent(new Event('resize'))
 
   // Setup everything needed for the game, and then start the game
   loadAssets()

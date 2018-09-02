@@ -3,7 +3,7 @@ import { State, setState } from './store.js'
 // TODO: refactor bullets into array of bullet
 // import Bullets from './Bullets.js'
 
-export default function Ship(image, x, y) {
+export default function Ship(image, x, y, sizePct = 100) {
   // Validate the inputs before we go forwards, so that we can safely assume image, x and y
   // are all valid to use and we are safe to use them without checking
   if (!(image instanceof Image)) {
@@ -16,11 +16,17 @@ export default function Ship(image, x, y) {
     throw new Error('Invalid Y, out of bounds of canvas');
   }
 
+  // Absolute values (passed in)
   this.image = image
   this.x = x
   this.y = y
-  this.halfShipWidth = Math.floor(this.image.width / 2);
-  this.halfShipHeight = Math.floor(this.image.height / 2);
+
+  // Calculated values based on inputs
+  const pct = (sizePct / 100)
+  this.width = Math.floor(image.width * pct)
+  this.height = Math.floor(image.height * pct)
+  this.halfWidth = Math.floor(this.width / 2)
+  this.halfHeight = Math.floor(this.height / 2)
 
   /*
   this.firing = false
@@ -32,9 +38,13 @@ export default function Ship(image, x, y) {
 
 Ship.prototype.draw = function() {
   const { ctx } = State;
-  const shipX = this.x - this.halfShipWidth;
-  const shipY = this.y - this.halfShipHeight;
-  ctx.drawImage(this.image, shipX ,shipY);
+  const shipX = this.x - this.halfWidth;
+  const shipY = this.y - this.halfHeight;
+  ctx.drawImage(this.image, shipX ,shipY, this.width, this.height);
+
+  // TODO: draw shields
+
+
   // this.weapon.draw(ctx)
 }
 

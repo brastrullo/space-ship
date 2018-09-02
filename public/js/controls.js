@@ -1,7 +1,13 @@
 import { State, setState } from './store.js'
 
+const onResize = (e) => {
+  const { canvas } = State;
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+};
+
 const onKeyPress = (e) => {
-  // todo setState({ keyPress: e.key })
+  // TODO setState({ keyPress: e.key })
 }
 
 const onMouseMove = (e) => {
@@ -14,7 +20,7 @@ const onMouseMove = (e) => {
   })
 }
 
-const mouseDown = (e) => {
+const onMouseDown = (e) => {
   // TODO: controls should not know of app info like weapons, and firing
   // just let me know when a button was pressed (i.e. mouseDown: true, or mouse: 'down')
   const { weapon } = State
@@ -23,11 +29,21 @@ const mouseDown = (e) => {
   })
 }
 
-const mouseUp = (e) => {
+const onMouseUp = (e) => {
   const { weapon } = State
   setState({
     weapon: { firing: false }
   })
 }
 
-export { onKeyPress, onMouseMove, mouseDown, mouseUp }
+const setupEventListeners = () => {
+  const { canvas } = State;
+  window.addEventListener('resize', onResize)
+  window.addEventListener('keypress', onKeyPress)
+  canvas.addEventListener('mousemove', onMouseMove)
+  canvas.addEventListener('mousedown', onMouseDown)
+  canvas.addEventListener('mouseup', onMouseUp)
+}
+
+export default setupEventListeners
+
