@@ -1,5 +1,7 @@
 const initialState = {
-  started: true,
+  canvas: undefined,
+  ctx: undefined,
+  gameRunning: false,
   mouse: { x: undefined, y: undefined },
   Enemies: [],
   weapon: {
@@ -21,14 +23,14 @@ const initialState = {
 }
 
 const State = Object.assign(true,{}, initialState)
-const setState = (newObj, log = () => {}) => {
-
+const setState = (newObj, onStateUpdated = () => {}) => {
+/*
   if (newObj.Ship !== undefined && newObj.size !== undefined) {
     newObj.size = Math.floor(newObj.size)
   }
-
+*/
   Object.assign(State, newObj)
-  log()
+  onStateUpdated()
 }
 
 export { State, setState }

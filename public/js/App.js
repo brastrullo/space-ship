@@ -13,18 +13,17 @@ import Environment from './Environment.js'
 TODO:
 - update enemy to use Ship() instead of its own entity
 - refactor bullets to be a bullet, and just focus on a single bullet
-
+- refactor environment
 
 
 */
 
 
-const { started } = State
-
 const Space = new Environment()
 
 const update = (time) => {
   const { mouse, PlayerShip, weapon, activeBullet, lastTimeBulletFired } = State
+
   // Update the player ship's location with the mouse location
   const hasMouse = (mouse.x !== undefined && mouse.y !== undefined);
   if (hasMouse) {
@@ -32,13 +31,18 @@ const update = (time) => {
     // TODO: if you want the ship to move up and down with the mouse, uncomment this line
     // PlayerShip.y = mouse.y
   }
+
+  // If there are bullets, move them
   if (activeBullet) {
     const bulletSpeed = 3;
     activeBullet.forEach(bullet => bullet.y -= bulletSpeed);
   }
-  if (weapon && weapon.firing !== undefined) {
-    if (weapon.firing === true && time - lastTimeBulletFired > 132) {
 
+  // Handle bullet firing
+  if (weapon && weapon.firing !== undefined) {
+    // If the weapon is firing and there has been enough time between bullets to fire another
+    // then add a new bullet to the list of active bullets
+    if (weapon.firing === true && time - lastTimeBulletFired > 132) {
       setState({ activeBullet: (activeBullet || []).concat({ x: PlayerShip.x, y: PlayerShip.y - PlayerShip.halfShipHeight }), lastTimeBulletFired: time })
     }
     PlayerShip.firing = weapon.firing;
@@ -60,8 +64,11 @@ const draw = (time) => {
 }
 
 const loop = (currentTime) => {
-  update(currentTime)
-  draw(currentTime)
+  const { gameRunning } = State
+  if (gameRunning) {
+    update(currentTime)
+    draw(currentTime)
+  }
   requestAnimationFrame(loop)
 }
 
@@ -84,22 +91,29 @@ const createEnemyShip = () => {
   setState({ EnemyShip: new Ship(State.enemyShipImg, canvas.width / 2, 100) })
 };
 
+const startGame = () => {
+  // Set the state so we know the game is running
+  // and then kick off the game loop
+  setState({ gameRunning: true }, () => requestAnimationFrame(loop));
+}
+
 const init = () => {
-  const startGame = () => requestAnimationFrame(loop)
+  // I want to share the access to the canvas and the context, so I'm going to put it into state
   const canvas = document.getElementById('canvas')
   const ctx = canvas.getContext('2d')
-
-  // I want to share the access to the canvas and the context, so I'm going to put it into state
   setState({ canvas, ctx });
 
+  // Setup event listeners
   window.addEventListener('resize', onResize)
-  window.addEventListener('mousemove', onMouseMove)
-  window.addEventListener('mousedown', mouseDown)
-  window.addEventListener('mouseup', mouseUp)
   window.addEventListener('keypress', onKeyPress)
+  canvas.addEventListener('mousemove', onMouseMove)
+  canvas.addEventListener('mousedown', mouseDown)
+  canvas.addEventListener('mouseup', mouseUp)
 
-  onResize();
+  // Trigger the onResize event, to set the canvas to the size of the window
+  onResize()
 
+  // Setup everything needed for the game, and then start the game
   loadAssets()
     .then(createPlayerShip)
     .then(createEnemyShip)
