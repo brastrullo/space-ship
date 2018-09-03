@@ -3,26 +3,38 @@ import { State, setState } from './store.js'
 import loadAssets from './loadAssets.js'
 import { hasMousePosition } from './utils.js'
 import setupEventListeners from './controls.js'
-// import { drawBullets, animateBullets } from './weapons.js'
 import Ship from './Ship.js'
-// import Enemies from './Enemies.js'
-// import Bullets from './Bullets.js'
+import Bullet from './Bullet.js'
 import Environment from './Environment.js'
 
 /*
 TODO:
-- update enemy to use Ship() instead of its own entity
-- refactor bullets to be a bullet, and just focus on a single bullet
-- refactor environment
-
-
+  - refactor Enemies.js
+  - refactor environment
 */
 
+const handleFiringBullets = (time) => {
+  const { activeBullet, PlayerShip, weapon, lastTimeBulletFired } = State
+  const bulletsArray = []
+  if (weapon && weapon.firing !== undefined) {
+    const throttleBulletFire = 132 // time in frames to throttle weapon firing
+    if (weapon.firing === true && time - lastTimeBulletFired > throttleBulletFire) {
+      // then add a new bullet to the list of active bullets
+      const bullet = new Bullet(PlayerShip.x,PlayerShip.y - PlayerShip.halfHeight)
+      bulletsArray.push(bullet)
+      setState({
+        activeBullet: (activeBullet || []).concat(bulletsArray), 
+        lastTimeBulletFired: time 
+      })
+    }
+    PlayerShip.firing = weapon.firing;
+  }
+}
 
 const Space = new Environment()
 
 const update = (time) => {
-  const { mouse, PlayerShip, weapon, activeBullet, lastTimeBulletFired } = State
+  const { mouse, PlayerShip, activeBullet } = State
 
   // Update the player ship's location with the mouse location
   const hasMouse = (mouse.x !== undefined && mouse.y !== undefined);
@@ -32,38 +44,18 @@ const update = (time) => {
     // PlayerShip.y = mouse.y
   }
 
-  // If there are bullets, move them
-  if (activeBullet) {
-    const bulletSpeed = 3
-    activeBullet.forEach(bullet => bullet.y -= bulletSpeed)
-  }
-
-  // Handle bullet firing
-  if (weapon && weapon.firing !== undefined) {
-    // If the weapon is firing and there has been enough time between bullets to fire another
-    // then add a new bullet to the list of active bullets
-    if (weapon.firing === true && time - lastTimeBulletFired > 132) {
-      setState({ activeBullet: (activeBullet || []).concat({ x: PlayerShip.x, y: PlayerShip.y - PlayerShip.halfShipHeight }), lastTimeBulletFired: time })
-    }
-    PlayerShip.firing = weapon.firing;
-  }
+  activeBullet.forEach( bullet => bullet.update())
+  handleFiringBullets(time)
 }
 
 // add error handling for assets loaded
 const draw = (time) => {
-  const { PlayerShip, EnemyShip, ctx, activeBullet } = State;
+  const { PlayerShip, EnemyShip, activeBullet } = State;
   Space.draw()
   PlayerShip.draw()
   EnemyShip.draw()
-
-  /*
-  if (activeBullet) {
-    ctx.fillStyle = 'blue';
-    activeBullet.forEach(bullet => ctx.fillRect(bullet.x, bullet.y, 5, 5));
-  }
-  */
-
-  //ctx.save & restore only in draws
+  activeBullet.forEach( bullet => bullet.draw())
+  //TODO: add ctx.save & restore in draw functions
 }
 
 const loop = (currentTime) => {
