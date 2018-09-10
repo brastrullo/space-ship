@@ -11,7 +11,32 @@ import Environment from './Environment.js'
 TODO:
   - refactor Enemies.js
   - refactor environment
+  - add hit detection
 */
+
+const hitDetection = () => {
+  const { EnemyShip, activeBullet } = State
+
+  if (EnemyShip !== undefined) {
+    const isInShipBounds = (ship, bullet) => {
+      const bulletRadius = Math.floor(bullet.size / 2)
+      return Math.pow((bullet.x - ship.x), 2) + 
+             Math.pow((bullet.y - ship.y), 2) <= Math.pow((bulletRadius + ship.radius), 2)
+    }
+
+    activeBullet.forEach(bullet => {
+      if (isInShipBounds(EnemyShip, bullet)) {
+        EnemyShip.tookDamage(bullet.dmg)
+      }
+    })
+    setState({ activeBullet: activeBullet.filter(bullet => !(isInShipBounds(EnemyShip, bullet)))})
+  }
+}
+
+const clearInactiveBullets = () => {
+  const { activeBullet } = State
+  setState({ activeBullet: activeBullet.filter(bullet => bullet.y > 0)})
+}
 
 const handleFiringBullets = (time) => {
   const { activeBullet, PlayerShip, weapon, lastTimeBulletFired } = State
@@ -31,10 +56,11 @@ const handleFiringBullets = (time) => {
   }
 }
 
+
 const Space = new Environment()
 
 const update = (time) => {
-  const { mouse, PlayerShip, activeBullet } = State
+  const { mouse, PlayerShip, EnemyShip, activeBullet } = State
 
   // Update the player ship's location with the mouse location
   const hasMouse = (mouse.x !== undefined && mouse.y !== undefined);
@@ -45,6 +71,8 @@ const update = (time) => {
   }
 
   activeBullet.forEach( bullet => bullet.update())
+  hitDetection()
+  clearInactiveBullets()
   handleFiringBullets(time)
 }
 

@@ -24,15 +24,46 @@ export default function Ship(image, x, y, sizePct = 100) {
   this.height = Math.floor(image.height * pct)
   this.halfWidth = Math.floor(this.width / 2)
   this.halfHeight = Math.floor(this.height / 2)
+  this.radius = this.halfHeight - 5
+
+  // Ship stats
+  this.hp = 100
+  this.hit = false
+}
+
+Ship.prototype.tookDamage = function(dmg) {
+  this.hit = true
+  this.hp = Math.max(0, this.hp - dmg) // keep hp positive 0+
+
+  if (this.hp <= 0) {
+    this.hit = false
+    console.log('ENEMY DEAD')
+  }
+  console.log(this.hp, this.hit)
 }
 
 Ship.prototype.draw = function() {
-  const { ctx } = State;
-  const shipX = this.x - this.halfWidth;
-  const shipY = this.y - this.halfHeight;
-  ctx.drawImage(this.image, shipX ,shipY, this.width, this.height);
+  const { ctx } = State
+  const shipX = this.x - this.halfWidth
+  const shipY = this.y - this.halfHeight
 
-  // TODO: draw shields
-  // this.weapon.draw(ctx)
+  ctx.drawImage(this.image, shipX ,shipY, this.width, this.height)
+  this.drawHealthBars()
 }
 
+Ship.prototype.drawHealthBars = function() {
+  if (this.hit === true) {
+    const { ctx } = State
+    const shipX = this.x - this.halfWidth
+    const shipY = this.y - this.halfHeight
+    const shipTop = shipY - 10
+    const healthBarWidth = this.width * (this.hp / 100)
+
+    ctx.beginPath()
+    ctx.rect(shipX, shipTop, healthBarWidth, 2)
+    ctx.fillStyle = 'red'
+    ctx.fill()
+    
+    setTimeout(() => this.hit = false, 200)
+  }
+}
