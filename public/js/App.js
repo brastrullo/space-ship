@@ -102,22 +102,22 @@ const createPlayerShip = () => {
   const playerStartX = Math.floor(canvas.width / 2)
   const playerStartY = (canvas.height - shipImg.height - buffer)
   const playerShipSizePct = 90 // % of the original image size
-  setState({ PlayerShip: new Ship(shipImg, playerStartX, playerStartY, playerShipSizePct) })
-};
+  setState({ PlayerShip: new Ship(shipImg, playerStartX, playerStartY, playerShipSizePct, 'player') })
+}
 
 const createEnemyShip = () => {
   // This is to create an instance of Ship but pointing to our loaded asset for Enemy Ship
   const { canvas, enemyShipImg } = State;
   const enemyStartX = Math.floor(canvas.width / 2)
-  const enemyStartY = 100 // 100px from the top of the screen
-  const enemyShipSizePct = 40 // % of the original image size
-  setState({ EnemyShip: new Ship(enemyShipImg, enemyStartX, enemyStartY, enemyShipSizePct) })
-};
+  const enemyStartY = Math.floor(canvas.height / 10) // 1/10th from the top of the screen
+  const enemyShipSizePct = 20 // % of the original image size
+  setState({ EnemyShip: new Ship(enemyShipImg, enemyStartX, enemyStartY, enemyShipSizePct, 'default') })
+}
 
 const startGame = () => {
   // Set the state so we know the game is running
   // and then kick off the game loop
-  setState({ gameRunning: true }, () => requestAnimationFrame(loop));
+  setState({ gameRunning: true }, () => requestAnimationFrame(loop))
 }
 
 const init = () => {

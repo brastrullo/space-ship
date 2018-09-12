@@ -1,6 +1,6 @@
 import { State, setState } from './store.js'
 
-export default function Ship(image, x, y, sizePct = 100) {
+export default function Ship(image, x, y, sizePct = 100, type = 'default') {
   // Validate the inputs before we go forwards, so that we can safely assume image, x and y
   // are all valid to use and we are safe to use them without checking
   if (!(image instanceof Image)) {
@@ -17,6 +17,7 @@ export default function Ship(image, x, y, sizePct = 100) {
   this.image = image
   this.x = x
   this.y = y
+  this.type = type
 
   // Calculated values based on inputs
   const pct = (sizePct / 100)
@@ -27,8 +28,15 @@ export default function Ship(image, x, y, sizePct = 100) {
   this.radius = this.halfHeight - 5
 
   // Ship stats
-  this.hp = 100
   this.hit = false
+
+  if (this.type === 'default') {
+    this.hp = 20
+  }
+  
+  if (this.type === 'player') {
+    this.hp = 100
+  }
 }
 
 Ship.prototype.tookDamage = function(dmg) {
@@ -51,19 +59,24 @@ Ship.prototype.draw = function() {
   this.drawHealthBars()
 }
 
+
+// this needs to be fixed after adding multiple enemies
 Ship.prototype.drawHealthBars = function() {
-  if (this.hit === true) {
+  // if (this.hit === true) {
     const { ctx } = State
     const shipX = this.x - this.halfWidth
     const shipY = this.y - this.halfHeight
     const shipTop = shipY - 10
-    const healthBarWidth = this.width * (this.hp / 100)
+    const healthBarLength = (hp) => {
+      const maxHp = hp
+      return this.width * (hp / maxHp)
+    }
 
     ctx.beginPath()
-    ctx.rect(shipX, shipTop, healthBarWidth, 2)
+    ctx.rect(shipX, shipTop, healthBarLength(this.hp), 2)
     ctx.fillStyle = 'red'
     ctx.fill()
     
     setTimeout(() => this.hit = false, 200)
-  }
+  // }
 }
