@@ -1,5 +1,4 @@
 import { State, setState } from './store.js'
-import { isInBounds } from './utils.js'
 
 export default function Bullet( x, y ) {
   this.x = x

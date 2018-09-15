@@ -9,37 +9,41 @@ import Environment from './Environment.js'
 
 /*
 TODO:
-  - refactor Enemies.js
   - refactor environment
   - add hit detection
 */
 
-const hitDetection = () => {
-  const { EnemyShip, activeBullet } = State
-
-  if (EnemyShip !== undefined) {
-    const isInShipBounds = (ship, bullet) => {
-      const bulletRadius = Math.floor(bullet.size / 2)
-      return Math.pow((bullet.x - ship.x), 2) + 
-             Math.pow((bullet.y - ship.y), 2) <= Math.pow((bulletRadius + ship.radius), 2)
-    }
-
-    activeBullet.forEach(bullet => {
-      if (isInShipBounds(EnemyShip, bullet)) {
-        EnemyShip.tookDamage(bullet.dmg)
-      }
+const hitDetection = (time) => {
+  const { EnemyShips, activeBullets } = State
+  const isInShipBounds = (ship, bullet) => {
+    const bulletRadius = Math.floor(bullet.size / 2)
+    return Math.pow((bullet.x - ship.x), 2) + 
+           Math.pow((bullet.y - ship.y), 2) <= Math.pow((bulletRadius + ship.radius), 2)
+  }
+  if (EnemyShips.length > 0) {
+    activeBullets.forEach(bullet => {
+      EnemyShips.forEach(EnemyShip => {
+        if (isInShipBounds(EnemyShip, bullet)) {
+          EnemyShip.tookDamage(bullet.dmg, time)
+          bullet.x = -bullet.x // place bullet off screen to set inactive
+        }
+      })
     })
-    setState({ activeBullet: activeBullet.filter(bullet => !(isInShipBounds(EnemyShip, bullet)))})
   }
 }
 
 const clearInactiveBullets = () => {
-  const { activeBullet } = State
-  setState({ activeBullet: activeBullet.filter(bullet => bullet.y > 0)})
+  const { activeBullets } = State
+  setState({ activeBullets: activeBullets.filter(bullet => bullet.y > 0)})
+}
+
+const clearDestroyedShips = () => {
+  const { EnemyShips } = State
+  setState({ EnemyShips: EnemyShips.filter(ship => ship.shipDmg < ship.maxHp)})
 }
 
 const handleFiringBullets = (time) => {
-  const { activeBullet, PlayerShip, weapon, lastTimeBulletFired } = State
+  const { activeBullets, PlayerShip, weapon, lastTimeBulletFired } = State
   const bulletsArray = []
   if (weapon && weapon.firing !== undefined) {
     const throttleBulletFire = 132 // time in frames to throttle weapon firing
@@ -48,7 +52,7 @@ const handleFiringBullets = (time) => {
       const bullet = new Bullet(PlayerShip.x,PlayerShip.y - PlayerShip.halfHeight)
       bulletsArray.push(bullet)
       setState({
-        activeBullet: (activeBullet || []).concat(bulletsArray), 
+        activeBullets: (activeBullets || []).concat(bulletsArray), 
         lastTimeBulletFired: time 
       })
     }
@@ -60,7 +64,7 @@ const handleFiringBullets = (time) => {
 const Space = new Environment()
 
 const update = (time) => {
-  const { mouse, PlayerShip, EnemyShip, activeBullet } = State
+  const { mouse, PlayerShip, EnemyShips, activeBullets } = State
 
   // Update the player ship's location with the mouse location
   const hasMouse = (mouse.x !== undefined && mouse.y !== undefined);
@@ -70,19 +74,20 @@ const update = (time) => {
     // PlayerShip.y = mouse.y
   }
 
-  activeBullet.forEach( bullet => bullet.update())
-  hitDetection()
+  activeBullets.forEach( bullet => bullet.update())
+  hitDetection(time)
   clearInactiveBullets()
+  clearDestroyedShips()
   handleFiringBullets(time)
 }
 
 // add error handling for assets loaded
 const draw = (time) => {
-  const { PlayerShip, EnemyShip, activeBullet } = State;
+  const { PlayerShip, EnemyShips, activeBullets } = State
   Space.draw()
-  PlayerShip.draw()
-  EnemyShip.draw()
-  activeBullet.forEach( bullet => bullet.draw())
+  PlayerShip.draw(time)
+  EnemyShips.forEach(enemy => enemy.draw(time))
+  activeBullets.forEach(bullet => bullet.draw(time))
   //TODO: add ctx.save & restore in draw functions
 }
 
@@ -101,17 +106,37 @@ const createPlayerShip = () => {
   const buffer = 20; // pixels away from the bottom of the screen, like padding
   const playerStartX = Math.floor(canvas.width / 2)
   const playerStartY = (canvas.height - shipImg.height - buffer)
-  const playerShipSizePct = 90 // % of the original image size
-  setState({ PlayerShip: new Ship(shipImg, playerStartX, playerStartY, playerShipSizePct, 'player') })
+  setState({ PlayerShip: new Ship(shipImg, playerStartX, playerStartY, {
+    maxHp: 100,
+    sizePercent: 90
+  })})
 }
 
-const createEnemyShip = () => {
+const createEnemyWave = () => {
   // This is to create an instance of Ship but pointing to our loaded asset for Enemy Ship
   const { canvas, enemyShipImg } = State;
   const enemyStartX = Math.floor(canvas.width / 2)
   const enemyStartY = Math.floor(canvas.height / 10) // 1/10th from the top of the screen
-  const enemyShipSizePct = 20 // % of the original image size
-  setState({ EnemyShip: new Ship(enemyShipImg, enemyStartX, enemyStartY, enemyShipSizePct, 'default') })
+  const numberOfEnemies = 5
+  const pos = [100, 100]
+  const shipConfig = {
+    maxHp: 25,
+    sizePercent: 20
+  }
+  const EnemyShipArray = []
+  const horizontalFormation = (pos, size, n) => {
+    const padding = 10 // space in between each ship in formation
+    for (let i = 0; i < n; i++) {
+      const scaledSize = size * (shipConfig.sizePercent/ 100) * i
+      const scaledPadding = padding * i
+      const posX = pos[0] + scaledSize + scaledPadding
+      const posY = pos[1]
+      EnemyShipArray.push(new Ship(enemyShipImg, posX, posY, shipConfig))
+    }
+  }
+
+  horizontalFormation(pos, enemyShipImg.width, numberOfEnemies)
+  setState({ EnemyShips: EnemyShipArray})
 }
 
 const startGame = () => {
@@ -127,7 +152,7 @@ const init = () => {
   setState({ canvas, ctx });
 
   // Setup event listeners
-  setupEventListeners();
+  setupEventListeners()
 
   // Trigger the onResize event, to set the canvas to the size of the window
   window.dispatchEvent(new Event('resize'))
@@ -135,7 +160,7 @@ const init = () => {
   // Setup everything needed for the game, and then start the game
   loadAssets()
     .then(createPlayerShip)
-    .then(createEnemyShip)
+    .then(createEnemyWave)
     .then(startGame)
 }
 

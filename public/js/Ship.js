@@ -1,6 +1,6 @@
 import { State, setState } from './store.js'
 
-export default function Ship(image, x, y, sizePct = 100, type = 'default') {
+export default function Ship(image, x, y, shipConfig) {
   // Validate the inputs before we go forwards, so that we can safely assume image, x and y
   // are all valid to use and we are safe to use them without checking
   if (!(image instanceof Image)) {
@@ -13,14 +13,22 @@ export default function Ship(image, x, y, sizePct = 100, type = 'default') {
     throw new Error('Invalid Y, out of bounds of canvas');
   }
 
+  const {
+    sizePercent,
+    maxHp,
+    shipDmg
+  } = shipConfig
+
   // Absolute values (passed in)
   this.image = image
   this.x = x
   this.y = y
-  this.type = type
+  this.sizePercent = sizePercent
+  this.maxHp = maxHp
+  this.shipDmg = 0
 
   // Calculated values based on inputs
-  const pct = (sizePct / 100)
+  const pct = (this.sizePercent / 100)
   this.width = Math.floor(image.width * pct)
   this.height = Math.floor(image.height * pct)
   this.halfWidth = Math.floor(this.width / 2)
@@ -28,55 +36,36 @@ export default function Ship(image, x, y, sizePct = 100, type = 'default') {
   this.radius = this.halfHeight - 5
 
   // Ship stats
-  this.hit = false
-
-  if (this.type === 'default') {
-    this.hp = 20
-  }
-  
-  if (this.type === 'player') {
-    this.hp = 100
-  }
+  this.timeWasLastHit = undefined
 }
 
-Ship.prototype.tookDamage = function(dmg) {
-  this.hit = true
-  this.hp = Math.max(0, this.hp - dmg) // keep hp positive 0+
-
-  if (this.hp <= 0) {
-    this.hit = false
-    console.log('ENEMY DEAD')
-  }
-  console.log(this.hp, this.hit)
+Ship.prototype.tookDamage = function(bulletDmg, time) {
+  const dmg = this.shipDmg + bulletDmg
+  this.timeWasLastHit = time
+  this.shipDmg = dmg >= this.maxHp ? this.maxHp : dmg
 }
 
-Ship.prototype.draw = function() {
+Ship.prototype.draw = function(time) {
   const { ctx } = State
   const shipX = this.x - this.halfWidth
   const shipY = this.y - this.halfHeight
 
   ctx.drawImage(this.image, shipX ,shipY, this.width, this.height)
-  this.drawHealthBars()
+  const shouldDrawHealthBar = this.timeWasLastHit + 150 >= time // show healthbar x ms after getting hit
+  if (shouldDrawHealthBar === true) this.drawHealthBar()
 }
 
 
 // this needs to be fixed after adding multiple enemies
-Ship.prototype.drawHealthBars = function() {
-  // if (this.hit === true) {
+Ship.prototype.drawHealthBar = function() {
     const { ctx } = State
     const shipX = this.x - this.halfWidth
     const shipY = this.y - this.halfHeight
     const shipTop = shipY - 10
-    const healthBarLength = (hp) => {
-      const maxHp = hp
-      return this.width * (hp / maxHp)
-    }
+    const healthBarLength = ((this.maxHp - this.shipDmg) / this.maxHp) * this.width
 
     ctx.beginPath()
-    ctx.rect(shipX, shipTop, healthBarLength(this.hp), 2)
+    ctx.rect(shipX, shipTop, healthBarLength, 2)
     ctx.fillStyle = 'red'
     ctx.fill()
-    
-    setTimeout(() => this.hit = false, 200)
-  // }
 }
