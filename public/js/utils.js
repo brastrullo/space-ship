@@ -35,7 +35,9 @@ const clearInactiveBullets = () => {
   setState({ activeBullets: activeBullets.filter(bullet => bullet.y > 0)})
 }
 
-const clearDestroyedShips = () => {
+const clearInactiveShips = () => {
+  // removes ships at max damage from active array
+  // TODO: clear ships off screen
   const { EnemyShips } = State
   setState({ EnemyShips: EnemyShips.filter(ship => ship.shipDmg < ship.maxHp)})
 }
@@ -50,7 +52,7 @@ const handleFiringBullets = (time) => {
       const bullet = new Bullet(PlayerShip.x,PlayerShip.y - PlayerShip.halfHeight)
       bulletsArray.push(bullet)
       setState({
-        activeBullets: (activeBullets || []).concat(bulletsArray), 
+        activeBullets: (activeBullets || []).concat(bulletsArray),
         lastTimeBulletFired: time 
       })
     }
@@ -70,31 +72,11 @@ const createPlayerShip = () => {
   })})
 }
 
-const createEnemyWave = () => {
-  // This is to create an instance of Ship but pointing to our loaded asset for Enemy Ship
-  const { canvas, enemyShipImg } = State;
-  const enemyStartX = Math.floor(canvas.width / 2)
-  const enemyStartY = Math.floor(canvas.height / 10) // 1/10th from the top of the screen
-  const numberOfEnemies = 5
-  const pos = [100, 100]
-  const shipConfig = {
-    maxHp: 25,
-    sizePercent: 20
-  }
-  const EnemyShipArray = []
-  const horizontalFormation = (pos, size, n) => {
-    const padding = 10 // space in between each ship in formation
-    for (let i = 0; i < n; i++) {
-      const scaledSize = size * (shipConfig.sizePercent/ 100) * i
-      const scaledPadding = padding * i
-      const posX = pos[0] + scaledSize + scaledPadding
-      const posY = pos[1]
-      EnemyShipArray.push(new Ship(enemyShipImg, posX, posY, shipConfig))
-    }
-  }
-
-  horizontalFormation(pos, enemyShipImg.width, numberOfEnemies)
-  setState({ EnemyShips: EnemyShipArray})
-}
-
-export { createImage, hasMousePosition, hitDetection, clearInactiveBullets, clearDestroyedShips, handleFiringBullets, createPlayerShip, createEnemyWave }
+export {
+  createImage,
+  hasMousePosition,
+  hitDetection,
+  clearInactiveBullets,
+  clearInactiveShips,
+  handleFiringBullets,
+  createPlayerShip }

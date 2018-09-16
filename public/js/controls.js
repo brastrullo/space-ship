@@ -2,8 +2,9 @@ import { State, setState } from './store.js'
 
 const onResize = (e) => {
   const { canvas } = State;
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  canvas.width = window.innerWidth
+  canvas.height = window.innerHeight
+
 };
 
 const onKeyPress = (e) => {

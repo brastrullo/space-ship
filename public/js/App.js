@@ -5,17 +5,21 @@ import {
   hasMousePosition, 
   hitDetection,
   clearInactiveBullets,
-  clearDestroyedShips,
+  clearInactiveShips,
   handleFiringBullets,
-  createPlayerShip,
-  createEnemyWave
+  createPlayerShip
 } from './utils.js'
+import  { createEnemyWave } from './EnemyWaves.js'
 import setupEventListeners from './controls.js'
 import Environment from './Environment.js'
 
 /*
-TODO:
-  - refactor environment
+TODO: COMPLETE LEVEL ONE
+  - refactor environment / add backgrounds
+  - add proper waves
+  - add damage to player ship colliding with enemies
+  - add UI
+  - add different enemy types
 */
 
 const Space = new Environment()
@@ -24,17 +28,16 @@ const update = (time) => {
   const { mouse, PlayerShip, EnemyShips, activeBullets } = State
 
   // Update the player ship's location with the mouse location
-  const hasMouse = (mouse.x !== undefined && mouse.y !== undefined);
+  const hasMouse = (mouse.x !== undefined && mouse.y !== undefined)
   if (hasMouse) {
     PlayerShip.x = mouse.x
-    // TODO: if you want the ship to move up and down with the mouse, uncomment this line
-    // PlayerShip.y = mouse.y
+    PlayerShip.y = mouse.y
   }
 
   activeBullets.forEach( bullet => bullet.update())
   hitDetection(time)
   clearInactiveBullets()
-  clearDestroyedShips()
+  clearInactiveShips()
   handleFiringBullets(time)
 }
 
@@ -43,7 +46,10 @@ const draw = (time) => {
   const { PlayerShip, EnemyShips, activeBullets } = State
   Space.draw()
   PlayerShip.draw(time)
-  EnemyShips.forEach(enemy => enemy.draw(time))
+  EnemyShips.forEach(enemy => {
+    enemy.draw(time)
+    enemy.moveShip(time) // TODO: fix startMotionTime
+  })
   activeBullets.forEach(bullet => bullet.draw(time))
   //TODO: add ctx.save & restore in draw functions
 }

@@ -16,13 +16,19 @@ export default function Ship(image, x, y, shipConfig) {
   const {
     sizePercent,
     maxHp,
-    shipDmg
+    shipDmg,
+    velocity,
+    linearSlope,
+    timeCreated,
+    startMotionTime
   } = shipConfig
 
   // Absolute values (passed in)
   this.image = image
   this.x = x
   this.y = y
+  this.velocity = velocity ? velocity : 0 // x and y velocity
+  this.linearSlope = linearSlope
   this.sizePercent = sizePercent
   this.maxHp = maxHp
   this.shipDmg = 0
@@ -37,6 +43,8 @@ export default function Ship(image, x, y, shipConfig) {
 
   // Ship stats
   this.timeWasLastHit = undefined
+  this.timeCreated = timeCreated
+  this.startMotionTime = startMotionTime
 }
 
 Ship.prototype.tookDamage = function(bulletDmg, time) {
@@ -49,14 +57,18 @@ Ship.prototype.draw = function(time) {
   const { ctx } = State
   const shipX = this.x - this.halfWidth
   const shipY = this.y - this.halfHeight
-
-  ctx.drawImage(this.image, shipX ,shipY, this.width, this.height)
   const shouldDrawHealthBar = this.timeWasLastHit + 150 >= time // show healthbar x ms after getting hit
+  ctx.drawImage(this.image, shipX ,shipY, this.width, this.height)
   if (shouldDrawHealthBar === true) this.drawHealthBar()
 }
 
+Ship.prototype.moveShip = function(time) {
+  if (time + this.startMotionTime >= time) { // TODO: this is supposed to make motion start x seconds after startGame
+    this.x += this.velocity[0]
+    this.y += this.velocity[1]
+  }
+}
 
-// this needs to be fixed after adding multiple enemies
 Ship.prototype.drawHealthBar = function() {
     const { ctx } = State
     const shipX = this.x - this.halfWidth

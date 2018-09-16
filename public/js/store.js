@@ -10,7 +10,7 @@ const initialState = {
   lastTimeBulletFired: 0,
   activeBullets: [],
   PlayerShip: undefined,
-  EnemyShips: undefined
+  EnemyShips: []
 }
 
 const State = Object.assign(true,{}, initialState)
