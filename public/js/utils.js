@@ -68,7 +68,7 @@ const createPlayerShip = () => {
   const playerStartY = (canvas.height - shipImg.height - buffer)
   setState({ PlayerShip: new Ship(shipImg, playerStartX, playerStartY, {
     maxHp: 100,
-    sizePercent: 90
+    sizePercent: 85
   })})
 }
 

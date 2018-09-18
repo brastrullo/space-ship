@@ -75,7 +75,6 @@ Ship.prototype.drawHealthBar = function() {
     const shipY = this.y - this.halfHeight
     const shipTop = shipY - 10
     const healthBarLength = ((this.maxHp - this.shipDmg) / this.maxHp) * this.width
-
     ctx.beginPath()
     ctx.rect(shipX, shipTop, healthBarLength, 2)
     ctx.fillStyle = 'red'

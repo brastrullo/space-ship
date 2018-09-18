@@ -48,7 +48,7 @@ const draw = (time) => {
   PlayerShip.draw(time)
   EnemyShips.forEach(enemy => {
     enemy.draw(time)
-    enemy.moveShip(time) // TODO: fix startMotionTime
+    enemy.moveShip(time)
   })
   activeBullets.forEach(bullet => bullet.draw(time))
   //TODO: add ctx.save & restore in draw functions
@@ -66,7 +66,7 @@ const loop = (currentTime) => {
 const startGame = () => {
   // Set the state so we know the game is running
   // and then kick off the game loop
-  setState({ gameRunning: true, initializationTime: 1 }, () => requestAnimationFrame(loop))
+  setState({ gameRunning: true }, () => requestAnimationFrame(loop))
 }
 
 const init = () => {
