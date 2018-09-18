@@ -63,7 +63,7 @@ Ship.prototype.draw = function(time) {
 }
 
 Ship.prototype.moveShip = function(time) {
-  if (time + this.startMotionTime >= time) { // TODO: this is supposed to make motion start x seconds after startGame
+  if (this.startMotionTime <= time) { // TODO: this is supposed to make motion start x seconds after startGame
     this.x += this.velocity[0]
     this.y += this.velocity[1]
   }

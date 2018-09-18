@@ -4,8 +4,7 @@ const onResize = (e) => {
   const { canvas } = State;
   canvas.width = window.innerWidth
   canvas.height = window.innerHeight
-
-};
+}
 
 const onKeyPress = (e) => {
   // TODO setState({ keyPress: e.key })

@@ -55,7 +55,7 @@ const draw = (time) => {
 }
 
 const loop = (currentTime) => {
-  const { gameRunning } = State
+  const { gameRunning, initializationTime } = State
   if (gameRunning) {
     update(currentTime)
     draw(currentTime)
@@ -66,7 +66,7 @@ const loop = (currentTime) => {
 const startGame = () => {
   // Set the state so we know the game is running
   // and then kick off the game loop
-  setState({ gameRunning: true }, () => requestAnimationFrame(loop))
+  setState({ gameRunning: true, initializationTime: 1 }, () => requestAnimationFrame(loop))
 }
 
 const init = () => {
