@@ -9,20 +9,21 @@ export const createEnemyWave = (time) => {
   const midTopPos = [canvasMidX, canvasTopY]
   
   const enemyType1 = {
-    maxHp: 15,
+    maxHp: 10,
     sizePercent: 20,
     velocity: [0, .3]
   }
 
   const enemyType2 = {
-    maxHp: 15,
+    maxHp: 10,
     sizePercent: 20,
-    velocity: [0,.5]
+    velocity: [0, 1]
   }
 
   const EnemyShipArray = [].concat(
-    verticalFormation(enemyType1, enemyShipImg, enemyShipImg.width, midTopPos, 8, 1000),
-    horizontalFormation(enemyType2, enemyShipImg, enemyShipImg.width, [100, 100], 5, 1500)
+    verticalFormation(enemyType1, enemyShipImg, enemyShipImg.width, [100, 100], 8, 1000),
+    horizontalFormation(enemyType2, enemyShipImg, enemyShipImg.width, [200, 100], 5, 1500),
+    horizontalFormation(enemyType2, enemyShipImg, enemyShipImg.width, [200, 200], 5, 1500)
   )
   setState({ EnemyShips: EnemyShips.concat(EnemyShipArray) })
 }

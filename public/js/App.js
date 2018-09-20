@@ -16,7 +16,8 @@ import Environment from './Environment.js'
 /*
 TODO: COMPLETE LEVEL ONE
   - refactor environment / add backgrounds
-  - add proper waves
+  - build 'cheat' panel debugger (able to set up enemies, stats, etc.)
+  - WAVES: refactor EnemyWaves.js to create enemies delayed by time
   - add damage to player ship colliding with enemies
   - add UI
   - add different enemy types
@@ -34,6 +35,8 @@ const update = (time) => {
     PlayerShip.y = mouse.y
   }
 
+  EnemyShips.forEach(enemy => enemy.moveShip(time))
+
   activeBullets.forEach( bullet => bullet.update())
   hitDetection(time)
   clearInactiveBullets()
@@ -46,10 +49,7 @@ const draw = (time) => {
   const { PlayerShip, EnemyShips, activeBullets } = State
   Space.draw()
   PlayerShip.draw(time)
-  EnemyShips.forEach(enemy => {
-    enemy.draw(time)
-    enemy.moveShip(time)
-  })
+  EnemyShips.forEach(enemy => enemy.draw(time))
   activeBullets.forEach(bullet => bullet.draw(time))
   //TODO: add ctx.save & restore in draw functions
 }
@@ -73,7 +73,7 @@ const init = () => {
   // I want to share the access to the canvas and the context, so I'm going to put it into state
   const canvas = document.getElementById('canvas')
   const ctx = canvas.getContext('2d')
-  setState({ canvas, ctx });
+  setState({ canvas, ctx })
 
   // Setup event listeners
   setupEventListeners()
