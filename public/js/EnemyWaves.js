@@ -9,23 +9,44 @@ export const createEnemyWave = (time) => {
   const midTopPos = [canvasMidX, canvasTopY]
   
   const enemyType1 = {
-    maxHp: 10,
+    maxHp: 20,
     sizePercent: 20,
     velocity: [0, .3]
   }
 
   const enemyType2 = {
-    maxHp: 10,
+    maxHp: 20,
     sizePercent: 20,
     velocity: [0, 1]
   }
 
+  const enemyType3 = {
+    maxHp: 20,
+    sizePercent: 20,
+    velocity: [0, 4]
+  }
+
+  // verticalFormation(enemyType1, enemyShipImg, enemyShipImg.width, [100, 100], 8, 1000),
+  // horizontalFormation(enemyType2, enemyShipImg, enemyShipImg.width, [200, 100], 5, 1500),
+  // horizontalFormation(enemyType2, enemyShipImg, enemyShipImg.width, [200, 200], 5, 1500),
   const EnemyShipArray = [].concat(
-    verticalFormation(enemyType1, enemyShipImg, enemyShipImg.width, [100, 100], 8, 1000),
-    horizontalFormation(enemyType2, enemyShipImg, enemyShipImg.width, [200, 100], 5, 1500),
-    horizontalFormation(enemyType2, enemyShipImg, enemyShipImg.width, [200, 200], 5, 1500)
+    lineWave(enemyType3, enemyShipImg, [150, 0], 10, 500),
+    lineWave(enemyType3, enemyShipImg, [300, 0], 10, 4000),
+    lineWave(enemyType3, enemyShipImg, [450, 0], 10, 7500),
   )
   setState({ EnemyShips: EnemyShips.concat(EnemyShipArray) })
+}
+
+const lineWave = (shipConfig, img, pos, n, spawnTime) => {
+  const formationArray = []
+  const spawnInterval = (1 / shipConfig.velocity[1]) * 1000
+  for (let i = 0; i < n; i++) {
+    const posX = pos[0]
+    const posY = pos[1]
+    shipConfig.startMotionTime = spawnTime + (spawnInterval * i)
+    formationArray.push(new Ship(img, posX, posY, shipConfig))
+  }
+  return formationArray
 }
 
 const verticalFormation = (shipConfig, img, size, pos, n, startMotionTime) => {

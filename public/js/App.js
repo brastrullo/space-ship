@@ -17,8 +17,6 @@ import Environment from './Environment.js'
 TODO: COMPLETE LEVEL ONE
   - refactor environment / add backgrounds
   - build 'cheat' panel debugger (able to set up enemies, stats, etc.)
-  - WAVES: refactor EnemyWaves.js to create enemies delayed by time
-  - add damage to player ship colliding with enemies
   - add UI
   - add different enemy types
 */

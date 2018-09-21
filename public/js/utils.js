@@ -12,13 +12,13 @@ const createImage = (filename) => new Promise((resolve) => {
 const hasMousePosition = (state = State) => state && Number.isInteger(state.mouse.y)
 
 const hitDetection = (time) => {
-  const { EnemyShips, activeBullets } = State
-  const isInShipBounds = (ship, bullet) => {
-    const bulletRadius = Math.floor(bullet.size / 2)
-    return Math.pow((bullet.x - ship.x), 2) + 
-           Math.pow((bullet.y - ship.y), 2) <= Math.pow((bulletRadius + ship.radius), 2)
+  const { EnemyShips, activeBullets, PlayerShip } = State
+  const isInShipBounds = (ship, object) => {
+    return Math.pow((object.x - ship.x), 2) + 
+           Math.pow((object.y - ship.y), 2) <= Math.pow((object.radius + ship.radius), 2)
   }
   if (EnemyShips.length > 0) {
+    //check if bullets hit enemy
     activeBullets.forEach(bullet => {
       EnemyShips.forEach(EnemyShip => {
         if (isInShipBounds(EnemyShip, bullet)) {
@@ -26,6 +26,17 @@ const hitDetection = (time) => {
           bullet.x = -bullet.x // place bullet off screen to set inactive
         }
       })
+    })
+    //check if playerShip hit enemyShip
+    EnemyShips.forEach(EnemyShip => {
+      if (isInShipBounds(EnemyShip, PlayerShip)) {
+        PlayerShip.tookDamage(EnemyShip.maxHp * .5, time)
+        EnemyShip.tookDamage(PlayerShip.maxHp * .5, time)
+        if (PlayerShip.shipDmg >= PlayerShip.maxHp) {
+          console.log('Player dead. GAME OVER!!')
+          PlayerShip.image = undefined
+        }
+      }
     })
   }
 }

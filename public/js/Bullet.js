@@ -4,8 +4,9 @@ export default function Bullet( x, y ) {
   this.x = x
   this.y = y
   this.velY = 20
-  this.dmg = 5
+  this.dmg = 10
   this.size = 5
+  this.radius = Math.floor(this.size / 2)
 }
 
 Bullet.prototype.update = function() {
