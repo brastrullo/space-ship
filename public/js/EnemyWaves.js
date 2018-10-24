@@ -43,16 +43,16 @@ const lineWave = (shipConfig, img, pos, n, spawnTime) => {
   for (let i = 0; i < n; i++) {
     const posX = pos[0]
     const posY = pos[1]
-    shipConfig.startMotionTime = spawnTime + (spawnInterval * i)
+    shipConfig.spawnTime = spawnTime + (spawnInterval * i)
     formationArray.push(new Ship(img, posX, posY, shipConfig))
   }
   return formationArray
 }
 
-const verticalFormation = (shipConfig, img, size, pos, n, startMotionTime) => {
+const verticalFormation = (shipConfig, img, size, pos, n, spawnTime) => {
   const padding = 10 // space in between each ship in formation
   const formationArray = []
-  shipConfig.startMotionTime = startMotionTime
+  shipConfig.spawnTime = spawnTime
   for (let i = 0; i < n; i++) {
     const scaledSize = size * (shipConfig.sizePercent/ 100) * i
     const scaledPadding = padding * i
@@ -63,10 +63,10 @@ const verticalFormation = (shipConfig, img, size, pos, n, startMotionTime) => {
   return formationArray
 }
 
-const horizontalFormation = (shipConfig, img, size, pos, n, startMotionTime) => {
+const horizontalFormation = (shipConfig, img, size, pos, n, spawnTime) => {
   const padding = 10 // space in between each ship in formation
   const formationArray = []
-  shipConfig.startMotionTime = startMotionTime
+  shipConfig.spawnTime = spawnTime
   for (let i = 0; i < n; i++) {
     const scaledSize = size * (shipConfig.sizePercent/ 100) * i
     const scaledPadding = padding * i

@@ -20,7 +20,7 @@ export default function Ship(image, x, y, shipConfig) {
     velocity,
     linearSlope,
     timeCreated,
-    startMotionTime
+    spawnTime
   } = shipConfig
 
   // Absolute values (passed in)
@@ -44,7 +44,7 @@ export default function Ship(image, x, y, shipConfig) {
   // Ship stats
   this.timeWasLastHit = undefined
   this.timeCreated = timeCreated
-  this.startMotionTime = startMotionTime
+  this.spawnTime = spawnTime
 }
 
 Ship.prototype.tookDamage = function(bulletDmg, time) {
@@ -63,20 +63,20 @@ Ship.prototype.draw = function(time) {
 }
 
 Ship.prototype.moveShip = function(time) {
-  if (this.startMotionTime <= time) {
+  if (this.spawnTime <= time) {
     this.x += this.velocity[0]
     this.y += this.velocity[1]
   }
 }
 
 Ship.prototype.drawHealthBar = function() {
-    const { ctx } = State
-    const shipX = this.x - this.halfWidth
-    const shipY = this.y - this.halfHeight
-    const shipTop = shipY - 10
-    const healthBarLength = ((this.maxHp - this.shipDmg) / this.maxHp) * this.width
-    ctx.beginPath()
-    ctx.rect(shipX, shipTop, healthBarLength, 2)
-    ctx.fillStyle = 'red'
-    ctx.fill()
+  const { ctx } = State
+  const shipX = this.x - this.halfWidth
+  const shipY = this.y - this.halfHeight
+  const shipTop = shipY - 10
+  const healthBarLength = ((this.maxHp - this.shipDmg) / this.maxHp) * this.width
+  ctx.beginPath()
+  ctx.rect(shipX, shipTop, healthBarLength, 2)
+  ctx.fillStyle = 'red'
+  ctx.fill()
 }

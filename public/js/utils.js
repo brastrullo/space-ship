@@ -17,10 +17,12 @@ const hitDetection = (time) => {
     return Math.pow((object.x - ship.x), 2) + 
            Math.pow((object.y - ship.y), 2) <= Math.pow((object.radius + ship.radius), 2)
   }
+  const EnemyActive = EnemyShips.filter(EnemyShip => EnemyShip.spawnTime <= time)
+  console.log(EnemyActive)
   if (EnemyShips.length > 0) {
     //check if bullets hit enemy
     activeBullets.forEach(bullet => {
-      EnemyShips.forEach(EnemyShip => {
+      EnemyActive.forEach(EnemyShip => {
         if (isInShipBounds(EnemyShip, bullet)) {
           EnemyShip.tookDamage(bullet.dmg, time)
           bullet.x = -bullet.x // place bullet off screen to set inactive
@@ -28,10 +30,11 @@ const hitDetection = (time) => {
       })
     })
     //check if playerShip hit enemyShip
-    EnemyShips.forEach(EnemyShip => {
+    EnemyActive.forEach(EnemyShip => {
       if (isInShipBounds(EnemyShip, PlayerShip)) {
-        PlayerShip.tookDamage(EnemyShip.maxHp * .5, time)
-        EnemyShip.tookDamage(PlayerShip.maxHp * .5, time)
+        const kamakazeDmg = .5 // damage multiplier that ship takes when hitting another ship
+        PlayerShip.tookDamage(EnemyShip.maxHp * kamakazeDmg, time)
+        EnemyShip.tookDamage(PlayerShip.maxHp * kamakazeDmg, time)
         if (PlayerShip.shipDmg >= PlayerShip.maxHp) {
           console.log('Player dead. GAME OVER!!')
           PlayerShip.image = undefined
