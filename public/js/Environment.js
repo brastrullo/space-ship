@@ -24,8 +24,10 @@ export const EnemyShips = new Enemies('../images/enemyShip.png', [
 
 const drawBackground = () => {
   const { canvas, ctx } = State
+  ctx.beginPath()
   ctx.fillStyle = '#123'
   ctx.fillRect(0, 0, canvas.width, canvas.height)
+  ctx.closePath()
 }
 
 Environment.prototype.draw = function(ctx) {

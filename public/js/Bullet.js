@@ -17,6 +17,8 @@ Bullet.prototype.update = function() {
 
 Bullet.prototype.draw = function() {
   const { ctx } = State
+  ctx.beginPath()
   ctx.fillStyle = 'white';
   ctx.fillRect(this.x, this.y, this.size, this.size)
+  
 }

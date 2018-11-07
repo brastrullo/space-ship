@@ -18,7 +18,6 @@ const hitDetection = (time) => {
            Math.pow((object.y - ship.y), 2) <= Math.pow((object.radius + ship.radius), 2)
   }
   const EnemyActive = EnemyShips.filter(EnemyShip => EnemyShip.spawnTime <= time)
-  console.log(EnemyActive)
   if (EnemyShips.length > 0) {
     //check if bullets hit enemy
     activeBullets.forEach(bullet => {
@@ -35,6 +34,8 @@ const hitDetection = (time) => {
         const kamakazeDmg = .5 // damage multiplier that ship takes when hitting another ship
         PlayerShip.tookDamage(EnemyShip.maxHp * kamakazeDmg, time)
         EnemyShip.tookDamage(PlayerShip.maxHp * kamakazeDmg, time)
+        setState({ PlayerHp: PlayerShip.getHp()})
+        
         if (PlayerShip.shipDmg >= PlayerShip.maxHp) {
           console.log('Player dead. GAME OVER!!')
           PlayerShip.image = undefined
@@ -67,7 +68,7 @@ const handleFiringBullets = (time) => {
       bulletsArray.push(bullet)
       setState({
         activeBullets: (activeBullets || []).concat(bulletsArray),
-        lastTimeBulletFired: time 
+        lastTimeBulletFired: time
       })
     }
     PlayerShip.firing = weapon.firing;
@@ -76,7 +77,7 @@ const handleFiringBullets = (time) => {
 
 const createPlayerShip = () => {
   // This is to create an instance of Ship but pointing to our loaded asset for Player Ship
-  const { canvas, shipImg } = State;
+  const { canvas, shipImg } = State
   const buffer = 20; // pixels away from the bottom of the screen, like padding
   const playerStartX = Math.floor(canvas.width / 2)
   const playerStartY = (canvas.height - shipImg.height - buffer)

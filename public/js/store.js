@@ -1,7 +1,10 @@
 const initialState = {
+  inGameTime: undefined,
   canvas: undefined,
   ctx: undefined,
   gameRunning: false,
+  gamePaused: false,
+  cheatMenuEnabled: false,
   assetsLoaded: false,
   mouse: { x: undefined, y: undefined },
   weapon: {
@@ -10,7 +13,8 @@ const initialState = {
   lastTimeBulletFired: 0,
   activeBullets: [],
   PlayerShip: undefined,
-  EnemyShips: []
+  EnemyShips: [],
+  keysPressed: {}
 }
 
 const State = Object.assign(true,{}, initialState)

@@ -1,13 +1,27 @@
 import { State, setState } from './store.js'
 
-const onResize = (e) => {
-  const { canvas } = State;
-  canvas.width = window.innerWidth
-  canvas.height = window.innerHeight
+const Keys = {
+  LEFT: 'KeyA',
+  UP: 'KeyW',
+  RIGHT: 'KeyD',
+  DOWN: 'KeyS',
+  FIRE: 'KeyJ',
+  PAUSE: 'KeyP'
 }
 
-const onKeyPress = (e) => {
-  // TODO setState({ keyPress: e.key })
+const onKeydown = (e) => {
+  const { inGameTime, lastKeyPressed, keysPressed } = State
+  // remove inGameTime from state - super expensive
+  keysPressed[e.code] = inGameTime
+  setState({ lastKeyPressed: keysPressed },
+    () => console.log(State.lastKeyPressed))
+}
+
+const onKeyup = (e) => {
+  const { inGameTime, lastKeyPressed, keysPressed } = State
+  // console.log(lastKeyPressed.indexOf(e.code), e.code,'asdf')
+  delete keysPressed[e.code]
+  setState({ lastKeyPressed: keysPressed })
 }
 
 const onMouseMove = (e) => {
@@ -36,14 +50,22 @@ const onMouseUp = (e) => {
   })
 }
 
-const setupEventListeners = () => {
-  const { canvas } = State;
+const onResize = (e) => {
+  const { canvas } = State
+  canvas.width = window.innerWidth
+  canvas.height = window.innerHeight
+}
+
+export const setupEventListeners = () => {
+  const { canvas } = State
   window.addEventListener('resize', onResize)
-  window.addEventListener('keypress', onKeyPress)
+  window.addEventListener('keyup', (e) => onKeyup(e))
+  window.addEventListener('keydown', (e) => onKeydown(e))
   canvas.addEventListener('mousemove', onMouseMove)
   canvas.addEventListener('mousedown', onMouseDown)
   canvas.addEventListener('mouseup', onMouseUp)
 }
 
-export default setupEventListeners
-
+export const setupKeyboardControls = () => {
+  setState({Keys}, console.log(State))
+}
