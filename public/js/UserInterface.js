@@ -70,13 +70,13 @@ UserInterface.prototype.draw = function() {
   const { ctx, PlayerShip, defeatedEnemies, score } = State
 
   ctx.save()
-  ctx.font = '18pt Arial'
+  ctx.font = '14pt Arial'
   ctx.fillStyle = 'white'
 
   const padding = 10
   const slot = (n) => (parseInt(ctx.font) + 5) * n
   ctx.fillText(`HP:${ PlayerShip.getHp() }`, padding, slot(1))
-  ctx.fillText(`SCORE:${ score }`, padding, slot(2) )
+  ctx.fillText(`SCORE: ${ score }`, padding, slot(2) )
   ctx.restore()
   
   this.cheatMenu()
