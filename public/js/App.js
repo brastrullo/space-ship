@@ -7,7 +7,9 @@ import {
   clearInactiveBullets,
   clearInactiveShips,
   handleFiringBullets,
-  createPlayerShip
+  createPlayerShip,
+  advanceWave,
+  enemyWaveDefeated
 } from './utils.js'
 import  { createEnemyWave } from './EnemyWaves.js'
 import {
@@ -19,12 +21,12 @@ import UserInterface from './UserInterface.js'
 
 /*
 TODO: COMPLETE LEVEL ONE
-  - refactor environment / add backgrounds
+  - refactor environment / add backgrounds(parallax scrolling)
 
   - build 'cheat' panel debugger (able to set up enemies, stats, etc.)
   - add UI
   - add different enemy types
-  
+
   - add weapon.firing to ship
   - fix enemy formations to be outside of canvas
   - add hp to to be read from state
@@ -43,7 +45,7 @@ const update = (time) => {
     lastKeyPressed,
     keysPressed,
     Keys,
-    inGameTime
+    currentWave
   } = State
 
   // Update the player ship's location with the mouse location
@@ -58,7 +60,7 @@ const update = (time) => {
     if(lastKeyPressed[Keys.UP]) PlayerShip.moveUp()
     if(lastKeyPressed[Keys.RIGHT]) PlayerShip.moveRight()
     if(lastKeyPressed[Keys.DOWN]) PlayerShip.moveDown()
-    if(lastKeyPressed[Keys.FIRE]) PlayerShip.fire()
+    if(lastKeyPressed[Keys.FIRE]) PlayerShip.fire() // TO-DO: fix this
     if(lastKeyPressed[Keys.PAUSE]) {
       setState({
         gameRunning: false,
@@ -69,12 +71,20 @@ const update = (time) => {
 
   EnemyShips.forEach(enemy => enemy.moveShip(time))
 
+  if (PlayerShip.timeDefeated !== null) {
+    setState({ gameRunning: false })
+  }
+
   activeBullets.forEach( bullet => bullet.update())
   hitDetection(time)
   clearInactiveBullets()
-  clearInactiveShips()
+  clearInactiveShips(time)
   handleFiringBullets(time)
-  setState({ inGameTime: time })
+  if (enemyWaveDefeated()) {
+    UI.triggerNewWave(time)
+    advanceWave(time)
+  }
+  UI.update(time)
 }
 
 // add error handling for assets loaded
@@ -94,7 +104,7 @@ const loop = (currentTime) => {
     update(currentTime)
     draw(currentTime)
   } else {
-    if (lastKeyPressed[Keys.PAUSE]) {
+    if (lastKeyPressed && lastKeyPressed[Keys.PAUSE]) {
       setState({ gameRunning: true, lastKeyPressed: Object.assign({}, lastKeyPressed, {[Keys.PAUSE]: false}) })
     }
   }

@@ -17,7 +17,7 @@ const hitDetection = (time) => {
     return Math.pow((object.x - ship.x), 2) + 
            Math.pow((object.y - ship.y), 2) <= Math.pow((object.radius + ship.radius), 2)
   }
-  const EnemyActive = EnemyShips.filter(EnemyShip => EnemyShip.spawnTime <= time)
+  const EnemyActive = EnemyShips.filter(EnemyShip => EnemyShip.spawnCondition <= time)
   if (EnemyShips.length > 0) {
     //check if bullets hit enemy
     activeBullets.forEach(bullet => {
@@ -38,11 +38,27 @@ const hitDetection = (time) => {
         
         if (PlayerShip.shipDmg >= PlayerShip.maxHp) {
           console.log('Player dead. GAME OVER!!')
-          PlayerShip.image = undefined
+          PlayerShip.timeDefeated = time
         }
       }
     })
   }
+}
+
+const advanceWave = (time) => {
+  const { EnemyShips, currentWave, waveStarted, wavesCompleted } = State
+  const waveTimeElapsed = time - waveStarted
+  setState({
+    waveStarted: time,
+    wavesCompleted: {...wavesCompleted, [currentWave]: waveTimeElapsed },
+    currentWave: currentWave + 1
+  })
+}
+
+const enemyWaveDefeated = () => {
+  const { EnemyShips, defeatedEnemies, currentWave, wavesCompleted } = State
+  return (EnemyShips.filter(ship => ship.spawnWave === currentWave).length === 0) &&
+         (defeatedEnemies.filter(ship => ship.spawnWave === currentWave).length > 0)
 }
 
 const clearInactiveBullets = () => {
@@ -50,11 +66,20 @@ const clearInactiveBullets = () => {
   setState({ activeBullets: activeBullets.filter(bullet => bullet.y > 0)})
 }
 
-const clearInactiveShips = () => {
+const clearInactiveShips = (time) => {
   // removes ships at max damage from active array
-  // TODO: clear ships off screen
-  const { EnemyShips } = State
-  setState({ EnemyShips: EnemyShips.filter(ship => ship.shipDmg < ship.maxHp)})
+  const { EnemyShips, defeatedEnemies, lastDefeatedEnemy } = State
+
+  const enemies = EnemyShips.filter(ship => ship.shipDmg >= ship.maxHp)
+  const defeated = enemies.length > 0
+  enemies.forEach(ship => ship.timeDefeated = time)
+  const lastDefeated = enemies.sort((a, b) => b.timeDefeated - a.timeDefeated)[0]
+
+  setState({
+    lastDefeatedEnemy: defeated ? lastDefeated : lastDefeatedEnemy,
+    defeatedEnemies: defeated ? defeatedEnemies.concat(enemies) : defeatedEnemies,
+    EnemyShips: EnemyShips.filter(ship => ship.shipDmg < ship.maxHp)
+  })
 }
 
 const handleFiringBullets = (time) => {
@@ -71,7 +96,7 @@ const handleFiringBullets = (time) => {
         lastTimeBulletFired: time
       })
     }
-    PlayerShip.firing = weapon.firing;
+    PlayerShip.firing = weapon.firing
   }
 }
 
@@ -94,4 +119,6 @@ export {
   clearInactiveBullets,
   clearInactiveShips,
   handleFiringBullets,
-  createPlayerShip }
+  createPlayerShip,
+  enemyWaveDefeated,
+  advanceWave }

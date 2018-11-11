@@ -13,13 +13,11 @@ const onKeydown = (e) => {
   const { inGameTime, lastKeyPressed, keysPressed } = State
   // remove inGameTime from state - super expensive
   keysPressed[e.code] = inGameTime
-  setState({ lastKeyPressed: keysPressed },
-    () => console.log(State.lastKeyPressed))
+  setState({ lastKeyPressed: keysPressed })
 }
 
 const onKeyup = (e) => {
   const { inGameTime, lastKeyPressed, keysPressed } = State
-  // console.log(lastKeyPressed.indexOf(e.code), e.code,'asdf')
   delete keysPressed[e.code]
   setState({ lastKeyPressed: keysPressed })
 }
@@ -67,5 +65,5 @@ export const setupEventListeners = () => {
 }
 
 export const setupKeyboardControls = () => {
-  setState({Keys}, console.log(State))
+  setState({Keys})
 }

@@ -14,7 +14,13 @@ const initialState = {
   activeBullets: [],
   PlayerShip: undefined,
   EnemyShips: [],
-  keysPressed: {}
+  defeatedEnemies: [],
+  timeLastDefeated: 0,
+  keysPressed: {},
+  waveStarted: undefined,
+  wavesCompleted: {},
+  currentLevel: 0,
+  currentWave: 0
 }
 
 const State = Object.assign(true,{}, initialState)

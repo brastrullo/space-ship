@@ -14,7 +14,8 @@ export default function Ship(image, x, y, shipConfig) {
     velocity,
     linearSlope,
     timeCreated,
-    spawnTime
+    spawnCondition,
+    spawnWave
   } = shipConfig
 
   // Absolute values (passed in)
@@ -26,6 +27,7 @@ export default function Ship(image, x, y, shipConfig) {
   this.sizePercent = sizePercent
   this.maxHp = maxHp
   this.shipDmg = 0
+  this.timeDefeated = null
   
   // Calculated values based on inputs
   const pct = (this.sizePercent / 100)
@@ -39,7 +41,8 @@ export default function Ship(image, x, y, shipConfig) {
   this.moveSpd = 8
   this.timeWasLastHit = undefined
   this.timeCreated = timeCreated
-  this.spawnTime = spawnTime
+  this.spawnCondition = spawnCondition
+  this.spawnWave = spawnWave
   this.firing = false // TO-DO
 }
 
@@ -66,7 +69,7 @@ Ship.prototype.draw = function(time) {
 }
 
 Ship.prototype.moveShip = function(time) {
-  if (this.spawnTime <= time) {
+  if (this.spawnCondition <= time && this.spawnWave === State.currentWave) {
     this.x += this.velocity[0]
     this.y += this.velocity[1]
   }
@@ -76,7 +79,7 @@ Ship.prototype.moveLeft = function() { this.x -= this.moveSpd }
 Ship.prototype.moveUp = function() { this.y -= this.moveSpd }
 Ship.prototype.moveRight = function() { this.x += this.moveSpd }
 Ship.prototype.moveDown = function() { this.y += this.moveSpd }
-Ship.prototype.fire = function() { this.firing = true }
+Ship.prototype.firing = function() { this.firing = !this.firing }
 
 Ship.prototype.drawHealthBar = function() {
   const { ctx } = State
